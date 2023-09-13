@@ -17,6 +17,10 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
+const (
+	modelInitURL = "https://raw.githubusercontent.com/sustainable-computing-io/kepler-model-db/main/models/Linux-4.15.0-213-generic-x86_64_v0.6/rapl/AbsPower/KubeletOnly/GradientBoostingRegressorTrainer_1.zip"
+)
+
 func TestKepler_Deletion(t *testing.T) {
 	f := test.NewFramework(t)
 
@@ -72,6 +76,67 @@ func TestBadKepler_Reconciliation(t *testing.T) {
 
 	ds := appsv1.DaemonSet{}
 	f.AssertNoResourceExists(exporter.DaemonSetName, components.Namespace, &ds)
+}
+
+func TestKeplerWithEstimatorSidecarOnly_Reconciliation(t *testing.T) {
+	f := test.NewFramework(t)
+
+	// pre-condition
+	f.AssertNoResourceExists("kepler", "", &v1alpha1.Kepler{}, test.NoWait())
+
+	// when
+	f.CreateKepler("kepler", func(k *v1alpha1.Kepler) {
+		k.Spec.Estimator.Node.Components.SidecarEnabled = true
+		k.Spec.Estimator.Node.Components.InitUrl = modelInitURL
+	})
+
+	// then
+	f.AssertResourceExists(components.Namespace, "", &corev1.Namespace{})
+	ds := appsv1.DaemonSet{}
+	f.AssertResourceExists(exporter.DaemonSetName, components.Namespace, &ds)
+
+	kepler := f.WaitUntilKeplerCondition("kepler", v1alpha1.Reconciled)
+	reconciled, err := k8s.FindCondition(kepler.Status.Conditions, v1alpha1.Reconciled)
+	assert.NoError(t, err, "unable to get reconciled condition")
+	assert.Equal(t, reconciled.ObservedGeneration, kepler.Generation)
+	assert.Equal(t, reconciled.Status, v1alpha1.ConditionTrue)
+
+	kepler = f.WaitUntilKeplerCondition("kepler", v1alpha1.Available)
+	available, err := k8s.FindCondition(kepler.Status.Conditions, v1alpha1.Available)
+	assert.NoError(t, err, "unable to get available condition")
+	assert.Equal(t, available.ObservedGeneration, kepler.Generation)
+	assert.Equal(t, available.Status, v1alpha1.ConditionTrue)
+}
+
+func TestKeplerWithFullDeployment_Reconciliation(t *testing.T) {
+	f := test.NewFramework(t)
+
+	// pre-condition
+	f.AssertNoResourceExists("kepler", "", &v1alpha1.Kepler{}, test.NoWait())
+
+	// when
+	f.CreateKepler("kepler", func(k *v1alpha1.Kepler) {
+		k.Spec.Estimator.Node.Components.SidecarEnabled = true
+		k.Spec.Estimator.Node.Components.InitUrl = modelInitURL
+		k.Spec.ModelServer.Enabled = true
+	})
+
+	// then
+	f.AssertResourceExists(components.Namespace, "", &corev1.Namespace{})
+	ds := appsv1.DaemonSet{}
+	f.AssertResourceExists(exporter.DaemonSetName, components.Namespace, &ds)
+
+	kepler := f.WaitUntilKeplerCondition("kepler", v1alpha1.Reconciled)
+	reconciled, err := k8s.FindCondition(kepler.Status.Conditions, v1alpha1.Reconciled)
+	assert.NoError(t, err, "unable to get reconciled condition")
+	assert.Equal(t, reconciled.ObservedGeneration, kepler.Generation)
+	assert.Equal(t, reconciled.Status, v1alpha1.ConditionTrue)
+
+	kepler = f.WaitUntilKeplerCondition("kepler", v1alpha1.Available)
+	available, err := k8s.FindCondition(kepler.Status.Conditions, v1alpha1.Available)
+	assert.NoError(t, err, "unable to get available condition")
+	assert.Equal(t, available.ObservedGeneration, kepler.Generation)
+	assert.Equal(t, available.Status, v1alpha1.ConditionTrue)
 }
 
 func TestNodeSelector(t *testing.T) {
