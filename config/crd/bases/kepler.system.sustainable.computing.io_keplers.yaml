@@ -137,6 +137,8 @@ spec:
                 properties:
                   deployment:
                     properties:
+                      image:
+                        type: string
                       nodeSelector:
                         additionalProperties:
                           type: string
@@ -192,6 +194,37 @@ spec:
                               type: string
                           type: object
                         type: array
+                    type: object
+                  metrics:
+                    properties:
+                      cgroups:
+                        properties:
+                          exposed:
+                            type: boolean
+                        required:
+                        - exposed
+                        type: object
+                      counter:
+                        properties:
+                          exposed:
+                            type: boolean
+                        required:
+                        - exposed
+                        type: object
+                      irq:
+                        properties:
+                          exposed:
+                            type: boolean
+                        required:
+                        - exposed
+                        type: object
+                      kubelet:
+                        properties:
+                          exposed:
+                            type: boolean
+                        required:
+                        - exposed
+                        type: object
                     type: object
                 type: object
               modelServer:

@@ -541,6 +541,13 @@ KeplerSpec defines the desired state of Kepler
           <br/>
         </td>
         <td>false</td>
+      </tr><tr>
+        <td><b><a href="#keplerspecexportermetrics">metrics</a></b></td>
+        <td>object</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
       </tr></tbody>
 </table>
 
@@ -562,6 +569,13 @@ KeplerSpec defines the desired state of Kepler
         </tr>
     </thead>
     <tbody><tr>
+        <td><b>image</b></td>
+        <td>string</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
         <td><b>nodeSelector</b></td>
         <td>map[string]string</td>
         <td>
@@ -646,6 +660,162 @@ The pod this Toleration is attached to tolerates any taint that matches the trip
           Value is the taint value the toleration matches to. If the operator is Exists, the value should be empty, otherwise just a regular string.<br/>
         </td>
         <td>false</td>
+      </tr></tbody>
+</table>
+
+
+### Kepler.spec.exporter.metrics
+<sup><sup>[↩ Parent](#keplerspecexporter)</sup></sup>
+
+
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody><tr>
+        <td><b><a href="#keplerspecexportermetricscgroups">cgroups</a></b></td>
+        <td>object</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b><a href="#keplerspecexportermetricscounter">counter</a></b></td>
+        <td>object</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b><a href="#keplerspecexportermetricsirq">irq</a></b></td>
+        <td>object</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b><a href="#keplerspecexportermetricskubelet">kubelet</a></b></td>
+        <td>object</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
+      </tr></tbody>
+</table>
+
+
+### Kepler.spec.exporter.metrics.cgroups
+<sup><sup>[↩ Parent](#keplerspecexportermetrics)</sup></sup>
+
+
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody><tr>
+        <td><b>exposed</b></td>
+        <td>boolean</td>
+        <td>
+          <br/>
+        </td>
+        <td>true</td>
+      </tr></tbody>
+</table>
+
+
+### Kepler.spec.exporter.metrics.counter
+<sup><sup>[↩ Parent](#keplerspecexportermetrics)</sup></sup>
+
+
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody><tr>
+        <td><b>exposed</b></td>
+        <td>boolean</td>
+        <td>
+          <br/>
+        </td>
+        <td>true</td>
+      </tr></tbody>
+</table>
+
+
+### Kepler.spec.exporter.metrics.irq
+<sup><sup>[↩ Parent](#keplerspecexportermetrics)</sup></sup>
+
+
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody><tr>
+        <td><b>exposed</b></td>
+        <td>boolean</td>
+        <td>
+          <br/>
+        </td>
+        <td>true</td>
+      </tr></tbody>
+</table>
+
+
+### Kepler.spec.exporter.metrics.kubelet
+<sup><sup>[↩ Parent](#keplerspecexportermetrics)</sup></sup>
+
+
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody><tr>
+        <td><b>exposed</b></td>
+        <td>boolean</td>
+        <td>
+          <br/>
+        </td>
+        <td>true</td>
       </tr></tbody>
 </table>
 

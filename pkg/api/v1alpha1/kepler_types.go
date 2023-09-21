@@ -136,10 +136,24 @@ type ExporterDeploymentSpec struct {
 	// If specified, define Pod's tolerations
 	// +optional
 	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
+
+	Image string `json:"image,omitempty"`
+}
+
+type ExporterMetricConfigSpec struct {
+	Exposed bool `json:"exposed"`
+}
+
+type ExporterMetricSpec struct {
+	Cgroups   *ExporterMetricConfigSpec `json:"cgroups,omitempty"`
+	Kubelet   *ExporterMetricConfigSpec `json:"kubelet,omitempty"`
+	HwCounter *ExporterMetricConfigSpec `json:"counter,omitempty"`
+	IRQ       *ExporterMetricConfigSpec `json:"irq,omitempty"`
 }
 
 type ExporterSpec struct {
 	Deployment ExporterDeploymentSpec `json:"deployment,omitempty"`
+	Metrics    ExporterMetricSpec     `json:"metrics,omitempty"`
 }
 
 // KeplerSpec defines the desired state of Kepler

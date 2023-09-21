@@ -17,6 +17,7 @@ limitations under the License.
 package exporter
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/sustainable.computing.io/kepler-operator/pkg/api/v1alpha1"
@@ -88,10 +89,15 @@ var (
 
 func newExporterContainer(deployment v1alpha1.ExporterDeploymentSpec) *corev1.Container {
 	bindAddress := "0.0.0.0:" + strconv.Itoa(int(deployment.Port))
+	// allow set image from Kepler CR
+	image := deployment.Image
+	if image == "" {
+		image = Config.Image
+	}
 	return &corev1.Container{
 		Name:            "kepler-exporter",
 		SecurityContext: &corev1.SecurityContext{Privileged: pointer.Bool(true)},
-		Image:           Config.Image,
+		Image:           image,
 		Command: []string{
 			"/usr/bin/kepler",
 			"-address", bindAddress,
@@ -245,16 +251,40 @@ func NewConfigMap(d components.Detail, k *v1alpha1.Kepler) *corev1.ConfigMap {
 		"ENABLE_GPU":                        "true",
 		"ENABLE_QAT":                        "false",
 		"ENABLE_EBPF_CGROUPID":              "true",
-		"EXPOSE_HW_COUNTER_METRICS":         "true",
-		"EXPOSE_IRQ_COUNTER_METRICS":        "true",
-		"EXPOSE_KUBELET_METRICS":            "true",
-		"EXPOSE_CGROUP_METRICS":             "true",
 		"ENABLE_PROCESS_METRICS":            "false",
 		"CPU_ARCH_OVERRIDE":                 "",
-		"CGROUP_METRICS":                    "*",
 		"REDFISH_PROBE_INTERVAL_IN_SECONDS": "60",
 		"REDFISH_SKIP_SSL_VERIFY":           "true",
 		"MODEL_CONFIG":                      modelConfig,
+	}
+
+	// allow enable/disable metrics
+	if k.Spec.Exporter.Metrics.Cgroups != nil {
+		cgroupsConfigMap := k8s.StringMap{
+			"EXPOSE_CGROUP_METRICS": fmt.Sprintf("%v", k.Spec.Exporter.Metrics.Cgroups.Exposed),
+		}
+		exporterConfigMap = exporterConfigMap.Merge(cgroupsConfigMap)
+	}
+
+	if k.Spec.Exporter.Metrics.Kubelet != nil {
+		kubeletConfigMap := k8s.StringMap{
+			"EXPOSE_KUBELET_METRICS": fmt.Sprintf("%v", k.Spec.Exporter.Metrics.Kubelet.Exposed),
+		}
+		exporterConfigMap = exporterConfigMap.Merge(kubeletConfigMap)
+	}
+
+	if k.Spec.Exporter.Metrics.Kubelet != nil {
+		counterConfigMap := k8s.StringMap{
+			"EXPOSE_HW_COUNTER_METRICS": fmt.Sprintf("%v", k.Spec.Exporter.Metrics.HwCounter.Exposed),
+		}
+		exporterConfigMap = exporterConfigMap.Merge(counterConfigMap)
+	}
+
+	if k.Spec.Exporter.Metrics.IRQ != nil {
+		irqConfigMap := k8s.StringMap{
+			"EXPOSE_IRQ_COUNTER_METRICS": fmt.Sprintf("%v", k.Spec.Exporter.Metrics.IRQ.Exposed),
+		}
+		exporterConfigMap = exporterConfigMap.Merge(irqConfigMap)
 	}
 
 	ms := k.Spec.ModelServer
