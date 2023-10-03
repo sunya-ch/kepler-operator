@@ -5,9 +5,9 @@ metadata:
   namespace: openshift-marketplace
 spec:
   sourceType: grpc
-  image: ghcr.io/sunya-ch/kepler-operator-catalog:0.8.0
+  image: quay.io/sustainability/kepler-operator-catalog:0.8.0
   displayName: Kepler FMS Catalog
-  publisher: sunya-ch
+  publisher: IBM
   updateStrategy:
     registryPoll:
       interval: 10m

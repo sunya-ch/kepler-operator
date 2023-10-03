@@ -12,12 +12,18 @@ spec:
       port: 9103
       image: quay.io/sustainable_computing_io/kepler:latest-libbpf
     metrics:
+      samplingInterval: 3 # default kepler interval sampling period in seconds
       cgroups:
-        enabled: false
+        exposed: false
       kubelet:
-        enabled: false
+        exposed: false
+      counter:
+        exposed: false
   estimator:
+    exposeIdle: true
     node:
       components:
         sidecar: true
         initUrl: https://raw.githubusercontent.com/sustainable-computing-io/kepler-model-db/main/models/Linux-4.15.0-213-generic-x86_64_v0.6/rapl/AbsPower/KubeletOnly/GradientBoostingRegressorTrainer_1.zip
+  serviceMonitor:
+    prometheusPoolingInterval: 30s # default prometheus pooling interval

@@ -427,7 +427,7 @@ func exporterReconcilers(k *v1alpha1.Kepler, cluster k8s.Cluster) []reconciler.R
 		exporter.NewConfigMap(components.Full, k),
 		exporter.NewDaemonSet(components.Full, k),
 		exporter.NewService(k),
-		exporter.NewServiceMonitor(),
+		exporter.NewServiceMonitor(k),
 	)
 
 	if cluster == k8s.OpenShift {

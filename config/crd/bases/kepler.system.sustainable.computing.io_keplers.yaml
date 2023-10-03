@@ -99,6 +99,9 @@ spec:
                             type: boolean
                         type: object
                     type: object
+                  exposeIdle:
+                    default: false
+                    type: boolean
                   node:
                     properties:
                       components:
@@ -225,6 +228,8 @@ spec:
                         required:
                         - exposed
                         type: object
+                      samplingInterval:
+                        type: string
                     type: object
                 type: object
               modelServer:
@@ -282,6 +287,11 @@ spec:
                     type: object
                   url:
                     default: ""
+                    type: string
+                type: object
+              serviceMonitor:
+                properties:
+                  prometheusPoolingInterval:
                     type: string
                 type: object
             type: object

@@ -287,6 +287,20 @@ func NewConfigMap(d components.Detail, k *v1alpha1.Kepler) *corev1.ConfigMap {
 		exporterConfigMap = exporterConfigMap.Merge(irqConfigMap)
 	}
 
+	if k.Spec.Estimator != nil {
+		idleConfigMap := k8s.StringMap{
+			"EXPOSE_ESTIMATED_IDLE_POWER_METRICS": fmt.Sprintf("%v", k.Spec.Estimator.ExposedIdleEnergy),
+		}
+		exporterConfigMap = exporterConfigMap.Merge(idleConfigMap)
+	}
+
+	if k.Spec.Exporter.Metrics != nil {
+		samplingIntervalConfigMap := k8s.StringMap{
+			"SAMPLE_PERIOD_SEC": fmt.Sprintf("%v", k.Spec.Exporter.Metrics.SamplingInterval),
+		}
+		exporterConfigMap = exporterConfigMap.Merge(samplingIntervalConfigMap)
+	}
+
 	ms := k.Spec.ModelServer
 	if ms != nil {
 		if ms.Enabled {
@@ -474,7 +488,7 @@ func NewService(k *v1alpha1.Kepler) *corev1.Service {
 	}
 }
 
-func NewServiceMonitor() *monv1.ServiceMonitor {
+func NewServiceMonitor(k *v1alpha1.Kepler) *monv1.ServiceMonitor {
 	relabelings := []*monv1.RelabelConfig{{
 		Action:      "replace",
 		Regex:       "(.*)",
@@ -484,6 +498,11 @@ func NewServiceMonitor() *monv1.ServiceMonitor {
 		},
 		TargetLabel: "instance",
 	}}
+
+	promPoolingInterval := "3s"
+	if k.Spec.ServiceMonitor != nil {
+		promPoolingInterval = k.Spec.ServiceMonitor.PrometheusPoolingInterval
+	}
 
 	return &monv1.ServiceMonitor{
 		TypeMeta: metav1.TypeMeta{
@@ -498,7 +517,7 @@ func NewServiceMonitor() *monv1.ServiceMonitor {
 		Spec: monv1.ServiceMonitorSpec{
 			Endpoints: []monv1.Endpoint{{
 				Port:           ServicePortName,
-				Interval:       "3s",
+				Interval:       monv1.Duration(promPoolingInterval),
 				Scheme:         "http",
 				RelabelConfigs: relabelings,
 			}},
