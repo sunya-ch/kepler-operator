@@ -102,6 +102,9 @@ type ModelServerSpec struct {
 type EstimatorSpec struct {
 	Node      EstimatorGroup `json:"node,omitempty"`
 	Container EstimatorGroup `json:"container,omitempty"`
+
+	// +kubebuilder:default=false
+	ExposedIdleEnergy bool `json:"exposeIdle,omitempty"`
 }
 
 type EstimatorGroup struct {
@@ -145,22 +148,28 @@ type ExporterMetricConfigSpec struct {
 }
 
 type ExporterMetricSpec struct {
-	Cgroups   *ExporterMetricConfigSpec `json:"cgroups,omitempty"`
-	Kubelet   *ExporterMetricConfigSpec `json:"kubelet,omitempty"`
-	HwCounter *ExporterMetricConfigSpec `json:"counter,omitempty"`
-	IRQ       *ExporterMetricConfigSpec `json:"irq,omitempty"`
+	Cgroups          *ExporterMetricConfigSpec `json:"cgroups,omitempty"`
+	Kubelet          *ExporterMetricConfigSpec `json:"kubelet,omitempty"`
+	HwCounter        *ExporterMetricConfigSpec `json:"counter,omitempty"`
+	IRQ              *ExporterMetricConfigSpec `json:"irq,omitempty"`
+	SamplingInterval string                    `json:"samplingInterval,omitempty"`
 }
 
 type ExporterSpec struct {
 	Deployment ExporterDeploymentSpec `json:"deployment,omitempty"`
-	Metrics    ExporterMetricSpec     `json:"metrics,omitempty"`
+	Metrics    *ExporterMetricSpec    `json:"metrics,omitempty"`
+}
+
+type ServiceMonitorSpec struct {
+	PrometheusPoolingInterval string `json:"prometheusPoolingInterval,omitempty"`
 }
 
 // KeplerSpec defines the desired state of Kepler
 type KeplerSpec struct {
-	Exporter    ExporterSpec     `json:"exporter,omitempty"`
-	Estimator   *EstimatorSpec   `json:"estimator,omitempty"`
-	ModelServer *ModelServerSpec `json:"modelServer,omitempty"`
+	Exporter       ExporterSpec        `json:"exporter,omitempty"`
+	Estimator      *EstimatorSpec      `json:"estimator,omitempty"`
+	ModelServer    *ModelServerSpec    `json:"modelServer,omitempty"`
+	ServiceMonitor *ServiceMonitorSpec `json:"serviceMonitor,omitempty"`
 }
 
 type ConditionType string
