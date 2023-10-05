@@ -12,7 +12,7 @@ spec:
       port: 9103
       image: quay.io/sustainable_computing_io/kepler:latest-libbpf
     metrics:
-      samplingInterval: 3 # default kepler interval sampling period in seconds
+      samplingInterval: "3" # default kepler interval sampling period in seconds
       cgroups:
         exposed: false
       kubelet:

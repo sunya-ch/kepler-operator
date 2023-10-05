@@ -107,6 +107,7 @@ func newExporterContainer(deployment v1alpha1.ExporterDeploymentSpec) *corev1.Co
 			"-kernel-source-dir=/usr/share/kepler/kernel_sources",
 			"-redfish-cred-file-path=/etc/redfish/redfish.csv",
 		},
+		ImagePullPolicy: corev1.PullAlways,
 		Ports: []corev1.ContainerPort{{
 			ContainerPort: int32(deployment.Port),
 			Name:          "http",

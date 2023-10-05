@@ -74,7 +74,7 @@ spec:
         - --leader-elect
         - --zap-log-level=5
         image: '<OPERATOR_IMG>'
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         name: manager
         securityContext:
           allowPrivilegeEscalation: false
