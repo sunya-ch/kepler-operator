@@ -94,6 +94,7 @@ func newExporterContainer(deployment v1alpha1.ExporterDeploymentSpec) *corev1.Co
 	if image == "" {
 		image = Config.Image
 	}
+	hostToContainer := corev1.MountPropagationHostToContainer
 	return &corev1.Container{
 		Name:            "kepler-exporter",
 		SecurityContext: &corev1.SecurityContext{Privileged: pointer.Bool(true)},
@@ -136,6 +137,7 @@ func newExporterContainer(deployment v1alpha1.ExporterDeploymentSpec) *corev1.Co
 			{Name: "kernel-debug", MountPath: "/sys/kernel/debug"},
 			{Name: "proc", MountPath: "/proc"},
 			{Name: "cfm", MountPath: "/etc/kepler/kepler.config"},
+			{Name: "run-nvidia", MountPath: "/run/nvidia", MountPropagation: &hostToContainer, ReadOnly: true},
 		},
 	}
 }
@@ -174,11 +176,12 @@ func NewDaemonSet(detail components.Detail, k *v1alpha1.Kepler) *appsv1.DaemonSe
 
 	// exporter volumes
 	var volumes = []corev1.Volume{
-		k8s.VolumeFromHost("lib-modules", "/lib/modules"),
-		k8s.VolumeFromHost("tracing", "/sys"),
-		k8s.VolumeFromHost("proc", "/proc"),
-		k8s.VolumeFromHost("kernel-src", "/usr/src/kernels"),
-		k8s.VolumeFromHost("kernel-debug", "/sys/kernel/debug"),
+		k8s.VolumeFromHost("lib-modules", "/lib/modules", corev1.HostPathUnset),
+		k8s.VolumeFromHost("tracing", "/sys", corev1.HostPathUnset),
+		k8s.VolumeFromHost("proc", "/proc", corev1.HostPathUnset),
+		k8s.VolumeFromHost("kernel-src", "/usr/src/kernels", corev1.HostPathUnset),
+		k8s.VolumeFromHost("kernel-debug", "/sys/kernel/debug", corev1.HostPathUnset),
+		k8s.VolumeFromHost("run-nvidia", "/run/nvidia", corev1.HostPathDirectoryOrCreate),
 		k8s.VolumeFromConfigMap("cfm", ConfigmapName),
 	}
 
@@ -273,7 +276,7 @@ func NewConfigMap(d components.Detail, k *v1alpha1.Kepler) *corev1.ConfigMap {
 		exporterConfigMap = exporterConfigMap.Merge(kubeletConfigMap)
 	}
 
-	if k.Spec.Exporter.Metrics.Kubelet != nil {
+	if k.Spec.Exporter.Metrics.HwCounter != nil {
 		counterConfigMap := k8s.StringMap{
 			"EXPOSE_HW_COUNTER_METRICS": fmt.Sprintf("%v", k.Spec.Exporter.Metrics.HwCounter.Exposed),
 		}

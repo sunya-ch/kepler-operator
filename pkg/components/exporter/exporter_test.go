@@ -117,6 +117,7 @@ func TestHostPID(t *testing.T) {
 	}
 }
 func TestVolumeMounts(t *testing.T) {
+	hostToContainer := corev1.MountPropagationHostToContainer
 	tt := []struct {
 		spec         v1alpha1.ExporterSpec
 		volumeMounts []corev1.VolumeMount
@@ -131,6 +132,7 @@ func TestVolumeMounts(t *testing.T) {
 				{Name: "kernel-debug", MountPath: "/sys/kernel/debug"},
 				{Name: "proc", MountPath: "/proc"},
 				{Name: "cfm", MountPath: "/etc/kepler/kepler.config"},
+				{Name: "run-nvidia", MountPath: "/run/nvidia", MountPropagation: &hostToContainer, ReadOnly: true},
 			},
 			scenario: "default case",
 		},
@@ -159,11 +161,12 @@ func TestVolumes(t *testing.T) {
 		{
 			spec: v1alpha1.ExporterSpec{},
 			volumes: []corev1.Volume{
-				k8s.VolumeFromHost("lib-modules", "/lib/modules"),
-				k8s.VolumeFromHost("tracing", "/sys"),
-				k8s.VolumeFromHost("proc", "/proc"),
-				k8s.VolumeFromHost("kernel-src", "/usr/src/kernels"),
-				k8s.VolumeFromHost("kernel-debug", "/sys/kernel/debug"),
+				k8s.VolumeFromHost("lib-modules", "/lib/modules", corev1.HostPathUnset),
+				k8s.VolumeFromHost("tracing", "/sys", corev1.HostPathUnset),
+				k8s.VolumeFromHost("proc", "/proc", corev1.HostPathUnset),
+				k8s.VolumeFromHost("kernel-src", "/usr/src/kernels", corev1.HostPathUnset),
+				k8s.VolumeFromHost("kernel-debug", "/sys/kernel/debug", corev1.HostPathUnset),
+				k8s.VolumeFromHost("run-nvidia", "/run/nvidia", corev1.HostPathDirectoryOrCreate),
 				k8s.VolumeFromConfigMap("cfm", ConfigmapName),
 			},
 			scenario: "default case",
