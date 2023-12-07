@@ -103,7 +103,7 @@ func NewDeployment(ms *v1alpha1.ModelServerSpec) *appsv1.Deployment {
 	if ms.Trainer != nil {
 		containers = append(containers, corev1.Container{
 			Image:           Config.Image,
-			ImagePullPolicy: corev1.PullIfNotPresent,
+			ImagePullPolicy: corev1.PullAlways,
 			Name:            "online-trainer",
 			VolumeMounts:    mounts,
 			Command:         []string{"python3.8"},

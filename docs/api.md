@@ -104,6 +104,13 @@ KeplerSpec defines the desired state of Kepler
           <br/>
         </td>
         <td>false</td>
+      </tr><tr>
+        <td><b><a href="#keplerspecservicemonitor">serviceMonitor</a></b></td>
+        <td>object</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
       </tr></tbody>
 </table>
 
@@ -129,6 +136,15 @@ KeplerSpec defines the desired state of Kepler
         <td>object</td>
         <td>
           <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>exposeIdle</b></td>
+        <td>boolean</td>
+        <td>
+          <br/>
+          <br/>
+            <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
@@ -708,6 +724,13 @@ The pod this Toleration is attached to tolerates any taint that matches the trip
           <br/>
         </td>
         <td>false</td>
+      </tr><tr>
+        <td><b>samplingInterval</b></td>
+        <td>string</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
       </tr></tbody>
 </table>
 
@@ -1043,6 +1066,33 @@ The pod this Toleration is attached to tolerates any taint that matches the trip
         <td>false</td>
       </tr><tr>
         <td><b>headerValue</b></td>
+        <td>string</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
+      </tr></tbody>
+</table>
+
+
+### Kepler.spec.serviceMonitor
+<sup><sup>[↩ Parent](#keplerspec)</sup></sup>
+
+
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody><tr>
+        <td><b>prometheusPoolingInterval</b></td>
         <td>string</td>
         <td>
           <br/>
